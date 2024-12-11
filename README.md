@@ -1,6 +1,11 @@
-# 3D Scan Visualization
+# 3D Scan Slice Preprocessing Visualization
 
 A Python tool for visualizing multi-modal medical imaging data, particularly focused on stroke imaging modalities like NCCT, CTA, CBF, CBV, MTT, and TMAX.
+
+<div align="center">
+  <img src="imgs/Slice_visualization.png" alt="Example of multi-modal visualization" width="800"/>
+  <p><em>Example visualization showing different modalities and processing configurations</em></p>
+</div>
 
 ## Features
 
