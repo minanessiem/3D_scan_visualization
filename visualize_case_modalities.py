@@ -8,6 +8,7 @@ import argparse
 from monai.transforms import ScaleIntensityRange, Spacing, Orientation, Affine
 from monai.data import MetaTensor
 import torch
+from src.utils.validation import slice_range, modality_list, get_max_slices
 
 def load_case_data(data_dir, json_file, case_id):
     # Load and parse JSON file
@@ -448,40 +449,6 @@ def process_tmax(data: torch.Tensor, threshold: float, max_val: float,
         )
         normalized = transform(data)
         return normalized.unsqueeze(0).unsqueeze(0)  # Add batch and channel dims [1, 1, H, W, D]
-
-def parse_slice_argument(slice_arg, max_slices):
-    """
-    Parse the slice argument which can be either a single number or a range (min,max).
-    
-    Args:
-        slice_arg: String containing either a single number or 'min,max'
-        max_slices: Maximum number of slices available in the data
-        
-    Returns:
-        List of slice numbers to display
-    """
-    try:
-        if ',' in slice_arg:
-            # Parse range
-            start, end = map(int, slice_arg.split(','))
-            if start < 0 or end >= max_slices or start > end:
-                raise ValueError(
-                    f"Invalid slice range. Must be between 0 and {max_slices-1} "
-                    f"and min must be less than max"
-                )
-            return list(range(start, end + 1))
-        else:
-            # Parse single slice
-            slice_num = int(slice_arg)
-            if slice_num < 0 or slice_num >= max_slices:
-                raise ValueError(
-                    f"Invalid slice number. Must be between 0 and {max_slices-1}"
-                )
-            return [slice_num]
-    except ValueError as e:
-        raise ValueError(
-            f"Invalid slice format. Use either a single number or 'min,max'. {str(e)}"
-        )
 
 def slice_range(arg):
     """Custom argparse type for handling slice ranges"""
