@@ -17,18 +17,12 @@ def process_cta(data: torch.Tensor, window: float, level: float,
 def get_cta_params(config: str) -> dict:
     """Get CTA-specific parameters for processing"""
     params = {
-        'CTA_arterial': {
-            'window': 600,
-            'level': 150,
+        'CTA_wg': {
+            'window': 8,
+            'level': 37,
             'clip_range': (-1000, 1000),
             'description': 'Arterial phase'
         },
-        'CTA_venous': {
-            'window': 400,
-            'level': 100,
-            'clip_range': (-1000, 1000),
-            'description': 'Venous phase'
-        }
     }
     
     if config not in params:

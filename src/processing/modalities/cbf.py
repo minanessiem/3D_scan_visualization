@@ -24,6 +24,9 @@ def process_cbf(data: torch.Tensor, threshold_percent: float, max_val: float,
     if data.ndim > 3:
         data = data.squeeze()
     
+    # Step 1: Create a more robust brain mask (exclude background and noise)
+    brain_mask = (data > 1e-5).float()  # Exclude very low or zero values (background)
+
     # Clip values to physiologically relevant range
     data_clipped = torch.clamp(data, 0, 100)  # Retain values between 0 and max_val
 
@@ -32,7 +35,7 @@ def process_cbf(data: torch.Tensor, threshold_percent: float, max_val: float,
 
     if ROI_mask:
         # Return only the thresholded mask (regions BELOW threshold)
-        threshold_mask = (data < threshold_percent).float()
+        threshold_mask = ((data_clipped < cbf_threshold) & (brain_mask > 0)).float()
         return threshold_mask.unsqueeze(0).unsqueeze(0)  # Add batch and channel dims [1, 1, H, W, D]
     else:
         # Return only the normalized data
