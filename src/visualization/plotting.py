@@ -84,7 +84,7 @@ def plot_multimodal_slices(data_dict: Dict[str, torch.Tensor],
     """Plot multiple modalities with composite images for each slice"""
     # Calculate grid dimensions
     mod_grid_rows, mod_grid_cols = calculate_grid_dimensions(len(data_dict))
-    
+    print(len(slice_nums), slice_nums)
     # Get slice information
     sample_slice = get_slice_from_volume(next(iter(data_dict.values())), 
                                        slice_nums[0], orientation)

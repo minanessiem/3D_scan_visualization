@@ -47,6 +47,7 @@ def load_and_process_nifti(file_path: str, modality_config: str, **kwargs) -> to
     print(f"\nDebug - Processing {modality_config}")
     print(f"NIfTI file: {os.path.basename(file_path)}")
     print(f"Original data shape: {data.shape}")
+    print(f"Number of slices - Height: {data.shape[0]}, Width: {data.shape[1]}, Depth: {data.shape[2]}")
     print(f"Original spacing: {original_spacing}")
     print(f"Data range: [{np.min(data):.3f}, {np.max(data):.3f}]")
     
@@ -57,8 +58,7 @@ def load_and_process_nifti(file_path: str, modality_config: str, **kwargs) -> to
         'std': float(np.std(data)),
     }
     
-    base_modality, config_params = get_modality_params(modality_config, data_stats)
-    processing_params = {**config_params, **kwargs}
+    base_modality, processing_params = get_modality_params(modality_config, data_stats)
     
     data = preprocess_volume(data, img.affine, original_spacing, mode="bilinear")
     
@@ -68,14 +68,15 @@ def load_and_process_nifti(file_path: str, modality_config: str, **kwargs) -> to
         'CBF': process_cbf,
         'CBV': process_cbv,
         'MTT': process_mtt,
-        'TMAX': process_tmax
+        'TMAX': process_tmax,
     }
     
     if base_modality not in processors:
         raise ValueError(f"Unknown base modality: {base_modality}")
     
     processed_data = processors[base_modality](data, **processing_params)
-    print(f"Processed {modality_config} using {processing_params['description']} configuration")
+    
+    print(f"Processed {modality_config} using {processing_params.get('description', 'default')} configuration")
     print(f"Output shape: {processed_data.shape}")
     
     return processed_data 
