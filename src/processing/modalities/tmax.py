@@ -2,6 +2,48 @@ import torch
 from monai.transforms import ScaleIntensityRange
 
 TMAX_PARAMS = {
+        'TMAX_min_0_max_4': {
+            'threshold': None,
+            'min_val': 0,
+            'max_val': 4,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 0, max 4'
+        },
+        'TMAX_min_0_max_6': {
+            'threshold': None,
+            'min_val': 0,
+            'max_val': 6,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 0, max 6'
+        },
+        'TMAX_min_0_max_8': {
+            'threshold': None,
+            'min_val': 0,
+            'max_val': 8,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 0, max 8'
+        },
+        'TMAX_min_0_max_10': {
+            'threshold': None,
+            'min_val': 0,
+            'max_val': 10,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 0, max 10'
+        },
+        'TMAX_min_0_max_12': {
+            'threshold': None,
+            'min_val': 0,
+            'max_val': 12,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 0, max 12'
+        },
+        'TMAX_min_0_max_16': {
+            'threshold': None,
+            'min_val': 0,
+            'max_val': 16,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 0, max 16'
+        },
         'TMAX_min_0_max_30': {
             'threshold': None,
             'min_val': 0,
@@ -16,12 +58,19 @@ TMAX_PARAMS = {
             'ROI_mask': False,
             'description': 'TMAX normalized: min 0, max MAX_VAL'
         },
-        'TMAX_min_0_max_4': {
+        'TMAX_min_4_max_10': {
             'threshold': None,
-            'min_val': 0,
-            'max_val': 4,
+            'min_val': 4,
+            'max_val': 10,
             'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 4'
+            'description': 'TMAX normalized: min 4, max 10'
+        },
+        'TMAX_min_6_max_10': {
+            'threshold': None,
+            'min_val': 6,
+            'max_val': 10,
+            'ROI_mask': False,
+            'description': 'TMAX normalized: min 6, max 10'
         },
         'TMAX_min_4_max_30': {
             'threshold': None,
@@ -29,20 +78,6 @@ TMAX_PARAMS = {
             'max_val': 30,
             'ROI_mask': False,
             'description': 'TMAX normalized: min 4, max 30'
-        },
-        'TMAX_min_0_max_5': {
-            'threshold': None,
-            'min_val': 0,
-            'max_val': 5,
-            'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 5'
-        },
-        'TMAX_min_0_max_6': {
-            'threshold': None,
-            'min_val': 0,
-            'max_val': 6,
-            'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 6'
         },
         'TMAX_min_5_max_30': {
             'threshold': None,
@@ -58,40 +93,12 @@ TMAX_PARAMS = {
             'ROI_mask': False,
             'description': 'TMAX normalized: min 6, max 30'
         },
-        'TMAX_min_0_max_7': {
-            'threshold': None,
-            'min_val': 0,
-            'max_val': 7,
-            'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 7'
-        },
-        'TMAX_min_0_max_8': {
-            'threshold': None,
-            'min_val': 0,
-            'max_val': 8,
-            'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 8'
-        },
         'TMAX_min_8_max_30': {
             'threshold': None,
             'min_val': 8,
             'max_val': 30,
             'ROI_mask': False,
             'description': 'TMAX normalized: min 8, max 30'
-        },
-        'TMAX_min_0_max_9': {
-            'threshold': None,
-            'min_val': 0,
-            'max_val': 9,
-            'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 9'
-        },
-        'TMAX_min_0_max_10': {
-            'threshold': None,
-            'min_val': 0,
-            'max_val': 10,
-            'ROI_mask': False,
-            'description': 'TMAX normalized: min 0, max 10'
         },
         'TMAX_min_10_max_30': {
             'threshold': None,
