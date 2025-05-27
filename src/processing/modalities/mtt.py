@@ -1,73 +1,131 @@
 import torch
 from monai.transforms import ScaleIntensityRange
+import copy
 
-def process_mtt(data: torch.Tensor, window: float = 12, level: float = 6,
-                threshold_min: float = 4, threshold_max: float = 14,
-                ROI_mask: bool = False, description: str = None, **kwargs) -> torch.Tensor:
-    """
-    Process MTT images by applying window/level normalization or generating a binary ROI mask
-    for values within a given threshold range.
+MTT_PARAMS = {
+    'MTT_min_0_max_4': {
+        'min_val': 0,
+        'max_val': 4,
+        'description': 'MTT normalized: 0 < MTT < 4'
+    },
+    'MTT_min_0_max_6': {
+        'min_val': 0,
+        'max_val': 6,
+        'description': 'MTT normalized: 0 < MTT < 6'
+    },
+    'MTT_min_0_max_8': {
+        'min_val': 0,
+        'max_val': 8,
+        'description': 'MTT normalized: 0 < MTT < 8'
+    },
+    'MTT_min_0_max_10': {
+        'min_val': 0,
+        'max_val': 10,
+        'description': 'MTT normalized: 0 < MTT < 10'
+    },
+    'MTT_min_0_max_12': {
+        'min_val': 0,
+        'max_val': 12,
+        'description': 'MTT normalized: 0 < MTT < 12'
+    },
+    'MTT_min_0_max_16': {
+        'min_val': 0,
+        'max_val': 16,
+        'description': 'MTT normalized: 0 < MTT < 16'
+    },
+    'MTT_min_0_max_30': {
+        'min_val': 0,
+        'max_val': 30,
+        'description': 'MTT normalized: 0 < MTT < 30'
+    },
+    'MTT_min_0_max_maxval': {
+        'min_val': 0,
+        'max_val': 'MAX_VAL',
+        'description': 'MTT with direct min to max scaling (full range)'
+    },
+    'MTT_min_4_max_10': {
+        'min_val': 4,
+        'max_val': 10,
+        'description': 'MTT normalized: 4 < MTT < 10'
+    },
+    'MTT_min_6_max_10': {
+        'min_val': 6,
+        'max_val': 10,
+        'description': 'MTT normalized: 6 < MTT < 10'
+    },
+    'MTT_min_4_max_30': {
+        'min_val': 4,
+        'max_val': 30,
+        'description': 'MTT normalized: 4 < MTT < 30'
+    },
+    'MTT_min_6_max_30': {
+        'min_val': 6,
+        'max_val': 30,
+        'description': 'MTT normalized: 6 < MTT < 30'
+    },
+    'MTT_min_8_max_30': {
+        'min_val': 8,
+        'max_val': 30,
+        'description': 'MTT normalized: 8 < MTT < 30'
+    },
+    'MTT_min_10_max_30': {
+        'min_val': 10,
+        'max_val': 30,
+        'description': 'MTT normalized: 10 < MTT < 30'
+    },
+}
 
-    Args:
-        data (torch.Tensor): Input tensor representing MTT values.
-        window (float): Window size for normalization.
-        level (float): Level for normalization.
-        threshold_min (float): Minimum threshold for MTT ROI mask.
-        threshold_max (float): Maximum threshold for MTT ROI mask.
-        ROI_mask (bool): If True, return binary ROI mask; otherwise, normalized MTT map.
-        description (str): Optional description string.
+def process_mtt(data: torch.Tensor, min_val: float, max_val: float,
+                description: str = None, **kwargs) -> torch.Tensor:
+    """Process MTT images with window/level normalization"""
+    data = torch.clamp(data, 0, max_val)
 
-    Returns:
-        torch.Tensor: Normalized MTT values or binary ROI mask.
-    """
-    if data.ndim > 3:
-        data = data.squeeze()
+    transform = ScaleIntensityRange(
+        a_min=min_val,
+        a_max=max_val,
+        b_min=0,
+        b_max=1,
+        clip=True
+    )
+    normalized = transform(data)
+    return normalized[None, ...]
 
-    # Step 1: Clip negative values to 0 (non-physiological MTT)
-    data_clipped = torch.clamp(data, min=0)
-
-    # Step 2: Create a brain mask (exclude background values close to zero)
-    brain_mask = (data_clipped > 1e-5).float()
-
-    if ROI_mask:
-        # Step 3a: Generate binary mask for values within [threshold_min, threshold_max]
-        roi_mask = ((data_clipped >= threshold_min) & (data_clipped <= threshold_max)).float()
-        roi_mask = roi_mask * brain_mask  # Exclude background
-        return roi_mask.unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions
-    else:
-        # Step 3b: Apply window/level normalization for MTT visualization
-        a_min = level - window / 2  # Lower window boundary
-        a_max = level + window / 2  # Upper window boundary
-        transform = ScaleIntensityRange(
-            a_min=a_min,
-            a_max=a_max,
-            b_min=0,
-            b_max=1,
-            clip=True
-        )
-        normalized = transform(data_clipped) * brain_mask  # Normalize and exclude background
-        return normalized.unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions
-
-
-def get_mtt_params(config: str) -> dict:
+def get_mtt_params(config: str, data_stats: dict = None) -> dict:
     """Get MTT-specific parameters for processing"""
-    params = {
-        'MTT_standard': {
-            'window': 12,
-            'level': 6,
-            'description': 'Standard MTT processing'
-        },
-        'MTT_4_14': {
-            'window': 12,
-            'level': 6,
-            'threshold_min': 4,
-            'threshold_max': 14,
-            'ROI_mask': True,
-            'description': 'MTT ROI Mask (4–14s)'
-        },
-    }
+    # Deep copy to avoid modifying the original
     
-    if config not in params:
-        raise ValueError(f"Unknown MTT configuration: {config}")
+    if config == 'all':
+        params = copy.deepcopy(MTT_PARAMS)
         
-    return params[config] 
+        # Replace placeholders with actual values if data_stats is provided
+        if data_stats and 'min_val' in data_stats and 'max_val' in data_stats:
+            for key in params:
+                # Replace MAX_VAL placeholder
+                if 'max_val' in params[key] and params[key]['max_val'] == 'MAX_VAL':
+                    params[key]['max_val'] = float(data_stats['max_val'])
+                
+                # Replace MIN_VAL placeholder
+                if 'min_val' in params[key] and params[key]['min_val'] == 'MIN_VAL':
+                    params[key]['min_val'] = float(data_stats['min_val'])
+        return params
+    
+    # Add MTT_ prefix if not present
+    if not config.startswith('MTT_'):
+        config = f'MTT_{config}'
+        
+    if config not in MTT_PARAMS:
+        raise ValueError(f"Unknown MTT configuration: {config}")
+    
+    result = {config: copy.deepcopy(MTT_PARAMS[config])}
+    
+    # Replace placeholders with actual values if data_stats is provided
+    if data_stats and 'min_val' in data_stats and 'max_val' in data_stats:
+        # Replace MAX_VAL placeholder
+        if 'max_val' in result[config] and result[config]['max_val'] == 'MAX_VAL':
+            result[config]['max_val'] = float(data_stats['max_val'])
+        
+        # Replace MIN_VAL placeholder
+        if 'min_val' in result[config] and result[config]['min_val'] == 'MIN_VAL':
+            result[config]['min_val'] = float(data_stats['min_val'])
+    
+    return result 

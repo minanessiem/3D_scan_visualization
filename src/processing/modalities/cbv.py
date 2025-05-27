@@ -58,6 +58,7 @@ CBV_PARAMS = {
             'ROI_mask': False,
             'description': 'CBV normalized: 0 < CBV < 1.9 mL/100g'
         },
+        # Perfusion-CT assessment of infarct core and penumbra: receiver operating characteristic curve analysis in 130 patients suspected of acute hemispheric stroke, Wintermark et al., 2006
         'CBV_min_0_max_2': {
             'min_val': 0,
             'max_val': 2,
@@ -95,7 +96,6 @@ CBV_PARAMS = {
             'description': 'CBV normalized: 0 < CBV < max value'
         },
     }
-
 
 def process_cbv(data: torch.Tensor, min_val: float, max_val: float,
                 description: str = None, **kwargs) -> torch.Tensor:

@@ -90,6 +90,14 @@ CBF_PARAMS = {
         'ROI_mask': True,
         'description': 'Mask: 0 < CBF < 20 mL / 100 g / min (cell death threshold)'
     },
+    # Identification of penumbra and infarct in acute ischemic stroke using computed tomography perfusion-derived blood flow and blood volume measurements, Murphy et al., 2006
+    'CBF_min_0_max_25': {
+        'threshold_percent': None,
+        'min_val': 0,
+        'max_val': 25,
+        'ROI_mask': False,
+        'description': '0 < CBF < 25 mL / 100 g / min'
+    },
     'CBF_min_0_max_30': {
         'threshold_percent': None,
         'min_val': 0,
@@ -118,6 +126,28 @@ CBF_PARAMS = {
         'ROI_mask': True,
         'description': 'Mask: 0 < CBF < 40 mL / 100 g / min (cell death threshold)'
     },
+    'CBF_min_0_max_50': {
+        'threshold_percent': None,
+        'min_val': 0,
+        'max_val': 50,
+        'ROI_mask': False,
+        'description': '0 < CBF < 50 mL / 100 g / min'
+    },
+    'CBF_min_0_max_60': {
+        'threshold_percent': None,
+        'min_val': 0,
+        'max_val': 60,
+        'ROI_mask': False,
+        'description': '0 < CBF < 60 mL / 100 g / min'
+    },
+    'CBF_min_0_max_70': {
+        'threshold_percent': None,
+        'min_val': 0,
+        'max_val': 70,
+        'ROI_mask': False,
+        'description': '0 < CBF < 70 mL / 100 g / min'
+    },
+
 }
 
 def process_cbf(data: torch.Tensor, threshold_percent: float, min_val: float, max_val: float,

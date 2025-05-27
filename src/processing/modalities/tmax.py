@@ -65,6 +65,7 @@ TMAX_PARAMS = {
             'ROI_mask': False,
             'description': 'TMAX normalized: min 4, max 10'
         },
+        # Comparison of computed tomography perfusion and magnetic resonance imaging perfusion-diffusion mismatch in ischemic stroke, Campbell et al., 2012
         'TMAX_min_6_max_10': {
             'threshold': None,
             'min_val': 6,
@@ -86,6 +87,7 @@ TMAX_PARAMS = {
             'ROI_mask': False,
             'description': 'TMAX normalized: min 5, max 30'
         },
+        # Comparison of computed tomography perfusion and magnetic resonance imaging perfusion-diffusion mismatch in ischemic stroke, Campbell et al., 2012
         'TMAX_min_6_max_30': {
             'threshold': None,
             'min_val': 6,
